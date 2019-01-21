@@ -1,8 +1,8 @@
 {
-  "name": "umi-plugin-api-types",
+  "name": "umi-plugin-types",
   "version": "0.1.0",
   "description": "",
-  "repository": "umijs/umi-plugin-api-types",
+  "repository": "umijs/umi-plugin-types",
   "author": {
     "name": "chencheng",
     "email": "sorrycc@gmail.com"
