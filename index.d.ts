@@ -1,31 +1,44 @@
-
-interface ILogFunc<T> {
-  (message: T, ...messages: string[]): void;
+/**
+ *
+ * System level variable
+ * https://umijs.org/plugin/develop.html#system-level-variable
+ */
+declare enum API_TYPE {
+  ADD,
+  MODIFY,
+  EVENT
 }
 
-interface IModifyFunc {
-  (memo: any): any;
+// @TODO
+export interface IConfig {
+  [key: string]: any;
 }
 
-interface IChangeWebpackConfigFunc {
-  (webpackConfig: object): object;
+// @TODO
+export interface IRoute {
+  path: string;
+  component: string;
+  [key: string]: any;
 }
 
+/**
+ *
+ * System level API
+ * https://umijs.org/plugin/develop.html#system-level-api
+ */
 export interface IRegisterPluginOpts {
   id: string;
   apply: any;
-  opts: object;
+  opts?: object;
 }
 
 interface IRegisterPlugin {
   (plugin: IRegisterPluginOpts): void;
 }
 
-declare enum API_TYPE { ADD, MODIFY, EVENT }
-
 export interface IPluginMethodOpts {
   /**
-   * 
+   *
    * @param {args}: Come from `applyPlugins(, { args: YOUR_ARGS })`
    */
   memo?: any;
@@ -34,7 +47,7 @@ export interface IPluginMethodOpts {
 
 export interface IPluginMethod {
   /**
-   * 
+   *
    * @param {opts}: Includes args passed in from `applyPlugins` and memo
    * @param {args}: Arguments passed in from other plug-ins when they call this method
    */
@@ -43,7 +56,7 @@ export interface IPluginMethod {
 
 export interface IRegisterMethodOpts {
   /**
-   * 
+   *
    * Choose one of `type` and `apply`.
    * View more at https://umijs.org/plugin/develop.html#registermethod
    */
@@ -64,32 +77,116 @@ interface IApplyPlugins {
   (methodName: string, opts?: IApplyPluginsOpts): any[] | undefined | any;
 }
 
-interface IReFunc {
-  (message?: string): void;
+interface IReDo<T> {
+  (message?: T): void;
 }
 
 interface IChangePluginOption {
   (pluginId: string, opts: any): void;
 }
 
-// @TODO
-export interface Route {
-  path: string;
-  component: string;
-  [key: string]: any;
+export interface ICommandOpts {
+  /**
+   *
+   * @param {description}: Description displayed when running `umi help`
+   * @param {details}: Details displayed when running `umi help [YOUR_COMMAND]`
+   * @param {hide}: Hide your command in `umi help`
+   * @param {options}: Options displayed when running `umi help [YOUR_COMMAND]`
+   * @param {usage}: Usage displayed when running `umi help [YOUR_COMMAND]`
+   */
+  description?: string;
+  details?: string;
+  hide?: boolean;
+  options?: object;
+  usage?: string;
+}
+
+interface IRegisterCommand {
+  (commandName: string, opts: ICommandOpts, fn: (args: any) => any): void;
+  (commandName: string, fn: (args: any) => any): void;
+}
+
+export interface IRegisterConfigOpts<T = any> {
+  /**
+   * 
+   * @param {name}: Name of your configuration
+   * @param {validate}: Verify that the value of configuration is valid
+   * @param {onChange}: Callback when the value of configuration changes
+   */
+  name: string;
+  validate?: (value: T) => void;
+  onChange?: (newConfig: IConfig, oldConfig: IConfig) => void;
+}
+
+export interface IRegisterConfigFunc {
+  (api: IApi): IRegisterConfigOpts;
+}
+
+interface IRegisterConfig {
+  (fn: IRegisterConfigFunc): void;
+}
+
+export interface IModifyCommandFuncOpts {
+  name: string;
+  args?: any;
+}
+
+export interface IModifyCommandFunc {
+  (opts: IModifyCommandFuncOpts): IModifyCommandFuncOpts;
+}
+
+interface IModifyCommand {
+  (fn: IModifyCommandFunc): void;
+}
+
+/**
+ *
+ * Tool class API
+ * https://umijs.org/plugin/develop.html#tool-class-api
+ */
+interface ILog<T = string> {
+  (message: T, ...messages: string[]): void;
+}
+
+interface IWinPath {
+  (path: string): string;
+}
+
+interface IFind {
+  (baseDir: string, fileNameWithoutExtname: string): string | null;
+}
+
+interface ICompatDirname<T = any> {
+  (path: string, cwd: string, fallback?: T): T | string;
+}
+
+/**
+ *
+ * Event class API
+ * https://umijs.org/plugin/develop.html#event-class-api
+ */
+
+/**
+ *
+ * Application class API
+ * https://umijs.org/plugin/develop.html#application-class-api
+ */
+interface IChangeWebpackConfig {
+  (webpackConfig: object): object;
+}
+
+interface IModify {
+  (memo: any): any;
 }
 
 export interface IApi {
-  log: {
-    info: ILogFunc<string>;
-    warn: ILogFunc<string>;
-    error: ILogFunc<string | Error>;
-    fatal: ILogFunc<string>;
-    success: ILogFunc<string>;
-    complete: ILogFunc<string>;
-    pending: ILogFunc<string>;
-    log: ILogFunc<string>;
-  },
+  /**
+   *
+   * System level variable
+   * https://umijs.org/plugin/develop.html#system-level-variable
+   */
+  API_TYPE: typeof API_TYPE;
+  config: IConfig;
   paths: {
     cwd: string;
     outputPath: string;
@@ -100,21 +197,57 @@ export interface IApi {
     absSrcPath: string;
     tmpDirPath: string;
     absTmpDirPath: string;
-  },
-  API_TYPE: typeof API_TYPE;
-  routes: Route[];
-  debug: ILogFunc<string>;
-  modifyDefaultConfig: IModifyFunc;
-  modifyWebpackConfig: IModifyFunc;
-  modifyAFWebpackOpts: IModifyFunc;
-  chainWebpackConfig: IChangeWebpackConfigFunc;
+  };
+  routes: IRoute[];
+  /**
+   *
+   * System level API
+   * https://umijs.org/plugin/develop.html#system-level-api
+   */
   registerPlugin: IRegisterPlugin;
   registerMethod: IRegisterMethod;
   applyPlugins: IApplyPlugins;
-  restart: IReFunc;
-  rebuildTmpFiles: IReFunc;
-  refreshBrowser: IReFunc;
-  rebuildHTML: IReFunc;
+  restart: IReDo<string>;
+  rebuildTmpFiles: IReDo<string>;
+  refreshBrowser: IReDo<void>;
+  rebuildHTML: IReDo<void>;
   changePluginOption: IChangePluginOption;
-  registerCommand
+  registerCommand: IRegisterCommand;
+  _registerConfig: IRegisterConfig;
+  _modifyCommand: IModifyCommand;
+  /**
+   *
+   * Tool class API
+   * https://umijs.org/plugin/develop.html#tool-class-api
+   */
+  log: {
+    info: ILog;
+    warn: ILog;
+    error: ILog<string | Error>;
+    fatal: ILog;
+    success: ILog;
+    complete: ILog;
+    pending: ILog;
+    log: ILog;
+  };
+  winPath: IWinPath;
+  debug: ILog;
+  findJS: IFind;
+  findCSS: IFind;
+  compatDirname: ICompatDirname;
+  /**
+   *
+   * Event class API
+   * https://umijs.org/plugin/develop.html#event-class-api
+   */
+
+  /**
+   *
+   * Application class API
+   * https://umijs.org/plugin/develop.html#application-class-api
+   */
+  modifyDefaultConfig: IModify;
+  chainWebpackConfig: IChangeWebpackConfig;
+  modifyWebpackConfig: IModify;
+  modifyAFWebpackOpts: IModify;
 }
