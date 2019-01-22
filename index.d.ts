@@ -1,4 +1,6 @@
-import { Stats } from "webpack";
+import IConfig, {IRoute} from './config';
+import { Stats, Configuration } from 'webpack';
+
 /**
  *
  * System level variable
@@ -10,18 +12,7 @@ declare enum API_TYPE {
   EVENT
 }
 
-// @TODO
-export interface IConfig {
-  [key: string]: any;
-}
-
-export interface IRoute {
-  path: string;
-  component: string;
-  routes?: IRoute[];
-  Routes?: IRoute[];
-  [key: string]: any;
-}
+export { IConfig, IRoute }
 
 /**
  *
@@ -41,7 +32,7 @@ interface IRegisterPlugin {
 export interface IPluginMethodOpts {
   /**
    *
-   * @param {args}: Come from `applyPlugins(, { args: YOUR_ARGS })`
+   * @param args: Come from `applyPlugins(, { args: YOUR_ARGS })`
    */
   memo?: any;
   args?: any;
@@ -50,8 +41,8 @@ export interface IPluginMethodOpts {
 export interface IPluginMethod {
   /**
    *
-   * @param {opts}: Includes args passed in from `applyPlugins` and memo
-   * @param {args}: Arguments passed in from other plug-ins when they call this method
+   * @param opts: Includes args passed in from `applyPlugins` and memo
+   * @param args: Arguments passed in from other plug-ins when they call this method
    */
   (opts: IPluginMethodOpts, ...args: any[]): any;
 }
@@ -90,11 +81,11 @@ interface IChangePluginOption {
 export interface ICommandOpts {
   /**
    *
-   * @param {description}: Description displayed when running `umi help`
-   * @param {details}: Details displayed when running `umi help [YOUR_COMMAND]`
-   * @param {hide}: Hide your command in `umi help`
-   * @param {options}: Options displayed when running `umi help [YOUR_COMMAND]`
-   * @param {usage}: Usage displayed when running `umi help [YOUR_COMMAND]`
+   * @param description: Description displayed when running `umi help`
+   * @param details: Details displayed when running `umi help [YOUR_COMMAND]`
+   * @param hide: Hide your command in `umi help`
+   * @param options: Options displayed when running `umi help [YOUR_COMMAND]`
+   * @param usage: Usage displayed when running `umi help [YOUR_COMMAND]`
    */
   description?: string;
   details?: string;
@@ -111,9 +102,9 @@ interface IRegisterCommand {
 export interface IRegisterConfigOpts<T = any> {
   /**
    *
-   * @param {name}: Name of your configuration
-   * @param {validate}: Verify that the value of configuration is valid
-   * @param {onChange}: Callback when the value of configuration changes
+   * @param name: Name of your configuration
+   * @param validate: Verify that the value of configuration is valid
+   * @param onChange: Callback when the value of configuration changes
    */
   name: string;
   validate?: (value: T) => void;
@@ -248,8 +239,77 @@ interface IChangeWebpackConfig {
   (webpackConfig: object): object;
 }
 
-interface IModify {
-  (memo: any): any;
+export interface IModifyFunc<T = any, U = any> {
+  /**
+   *
+   * https://umijs.org/plugin/develop.html#registermethod
+   */
+  (memo: T | undefined, args?: U): T | any;
+}
+
+export interface IModify<T = any, U = any> {
+  (fn: IModifyFunc<T, U> | T): void;
+}
+
+export interface IAddFunc<T = any, U = any> {
+  /**
+   *
+   * https://umijs.org/plugin/develop.html#registermethod
+   */
+  (memo: T[] | undefined, args?: U): T | T[];
+}
+
+export interface IAdd<T = any, U = any> {
+  (fn: IAddFunc<T, U> | T | T[]): void;
+}
+
+interface IGetChunkPath {
+  (fileName: string): string | null;
+}
+
+interface CheerioStatic extends CheerioSelector {
+  // @types/cheerio/index.d.ts
+  xml(): string;
+  root(): Cheerio;
+  contains(container: CheerioElement, contained: CheerioElement): boolean;
+  parseHTML(
+    data: string,
+    context?: Document,
+    keepScripts?: boolean
+  ): Document[];
+  html(options?: CheerioOptionsInterface): string;
+  html(selector: string, options?: CheerioOptionsInterface): string;
+  html(element: Cheerio, options?: CheerioOptionsInterface): string;
+  html(element: CheerioElement, options?: CheerioOptionsInterface): string;
+}
+
+interface IModifyHTMLWithASTArgs {
+  route: IRoute;
+  getChunkPath: IGetChunkPath;
+}
+
+export interface IModifyHTMLWithASTFunc {
+  ($: CheerioStatic, args: IModifyHTMLWithASTArgs): void;
+}
+
+interface IModifyHTMLWithAST {
+  (fn: IModifyHTMLWithASTFunc): void;
+}
+
+export interface IAddImportOpts {
+  /**
+   *
+   * @param source: Path to module
+   * @param specifier: Module name with import, can be ignored
+   */
+  source: string;
+  specifier?: string;
+}
+
+interface IModifyRouteComponentArgs {
+  importPath: string;
+  webpackChunkName: string;
+  component: string;
 }
 
 export interface IApi {
@@ -328,8 +388,38 @@ export interface IApi {
    * Application class API
    * https://umijs.org/plugin/develop.html#application-class-api
    */
-  modifyDefaultConfig: IModify;
+  modifyDefaultConfig: IModify<object>;
+  addPageWatcher: IAdd<string>;
+  addHTMLMeta: IAdd<object, { route?: IRoute }>;
+  addHTMLLink: IAdd<object, { route?: IRoute }>;
+  addHTMLStyle: IAdd<object, { route?: IRoute }>;
+  addHTMLScript: IAdd<object, { route?: IRoute }>;
+  addHTMLHeadScript: IAdd<object, { route?: IRoute }>;
+  modifyHTMLChunks: IModify<string[], { route?: IRoute }>;
+  modifyHTMLWithAST: IModifyHTMLWithAST;
+  modifyHTMLContext: IModify<object, { route?: IRoute }>;
+  modifyRoutes: IModify<IRoute[]>;
+  addEntryImportAhead: IAdd<IAddImportOpts>;
+  addEntryPolyfillImports: IAdd<IAddImportOpts>;
+  addEntryImport: IAdd<IAddImportOpts>;
+  addEntryCodeAhead: IAdd<string>;
+  addEntryCode: IAdd<string>;
+  addRouterImport: IAdd<IAddImportOpts>;
+  addRouterImportAhead: IAdd<IAddImportOpts>;
+  addRendererWrapperWithComponent: IAdd<IAddImportOpts>;
+  addRendererWrapperWithModule: IAdd<string>;
+  modifyEntryRender: IModify<string>;
+  modifyEntryHistory: IModify<string>;
+  modifyRouteComponent: IModify<string, IModifyRouteComponentArgs>;
+  modifyRouterRootComponent: IModify<string>;
+  modifyWebpackConfig: IModify<Configuration>;
+  modifyAFWebpackOpts: IModify<object>;
   chainWebpackConfig: IChangeWebpackConfig;
-  modifyWebpackConfig: IModify;
-  modifyAFWebpackOpts: IModify;
+  addMiddleware: IAdd;
+  addMiddlewareAhead: IAdd;
+  addMiddlewareBeforeMock: IAdd;
+  addMiddlewareAfterMock: IAdd;
+  addVersionInfo: IAdd<string>;
+  addRuntimePlugin: IAdd<string>;
+  addRuntimePluginKey: IAdd<string>;
 }
