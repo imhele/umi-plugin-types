@@ -1,3 +1,4 @@
+import { Stats } from "webpack";
 /**
  *
  * System level variable
@@ -14,10 +15,11 @@ export interface IConfig {
   [key: string]: any;
 }
 
-// @TODO
 export interface IRoute {
   path: string;
   component: string;
+  routes?: IRoute[];
+  Routes?: IRoute[];
   [key: string]: any;
 }
 
@@ -108,7 +110,7 @@ interface IRegisterCommand {
 
 export interface IRegisterConfigOpts<T = any> {
   /**
-   * 
+   *
    * @param {name}: Name of your configuration
    * @param {validate}: Verify that the value of configuration is valid
    * @param {onChange}: Callback when the value of configuration changes
@@ -165,6 +167,77 @@ interface ICompatDirname<T = any> {
  * Event class API
  * https://umijs.org/plugin/develop.html#event-class-api
  */
+export interface IBeforeDevServerFunc {
+  (args: { service: any }): void;
+}
+
+export interface IAfterDevServerFunc {
+  (args: { service: any }): void;
+}
+
+interface IBeforeDevServer {
+  (fn: IBeforeDevServerFunc): void;
+}
+
+interface IAfterDevServer {
+  (fn: IAfterDevServerFunc): void;
+}
+
+interface IOnStart {
+  (fn: () => void): void;
+}
+
+export interface IOnDevCompileDoneFunc {
+  (args: { isFirstCompile: boolean; stats: Stats }): void;
+}
+
+interface IOnDevCompileDone {
+  (fn: IOnDevCompileDoneFunc): void;
+}
+
+export interface IOnOptionChangeFunc<T = any> {
+  (newOpts: T): void;
+}
+
+interface IOnOptionChange {
+  (fn: IOnOptionChangeFunc): void;
+}
+
+export interface IOnBuildSuccessFunc {
+  (args: { stats: Stats }): void;
+}
+
+interface IOnBuildSuccess {
+  (fn: IOnBuildSuccessFunc): void;
+}
+
+export interface IOnBuildFailFunc {
+  (args: { stats: Stats; err: Error }): void;
+}
+
+interface IOnBuildFail {
+  (fn: IOnBuildFailFunc): void;
+}
+
+interface IOnHTMLRebuild {
+  (fn: () => void): void;
+}
+
+export interface IOnGenerateFilesFunc {
+  (args: { isRebuild?: boolean }): void;
+}
+
+interface IOnGenerateFiles {
+  (fn: IOnGenerateFilesFunc): void;
+}
+
+export interface IOnPatchRouteFunc {
+  (args: { route: IRoute }): void;
+}
+
+interface IOnPatchRoute {
+  (fn: IOnPatchRouteFunc): void;
+}
 
 /**
  *
@@ -240,7 +313,16 @@ export interface IApi {
    * Event class API
    * https://umijs.org/plugin/develop.html#event-class-api
    */
-
+  beforeDevServer: IBeforeDevServer;
+  afterDevServer: IAfterDevServer;
+  onStart: IOnStart;
+  onDevCompileDone: IOnDevCompileDone;
+  onOptionChange: IOnOptionChange;
+  onBuildSuccess: IOnBuildSuccess;
+  onBuildFail: IOnBuildFail;
+  onHTMLRebuild: IOnHTMLRebuild;
+  onGenerateFiles: IOnGenerateFiles;
+  onPatchRoute: IOnPatchRoute;
   /**
    *
    * Application class API
