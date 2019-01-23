@@ -2,7 +2,6 @@ import IConfig, {IRoute} from './config';
 import { Stats, Configuration } from 'webpack';
 
 /**
- *
  * System level variable
  * https://umijs.org/plugin/develop.html#system-level-variable
  */
@@ -15,7 +14,6 @@ declare enum API_TYPE {
 export { IConfig, IRoute }
 
 /**
- *
  * System level API
  * https://umijs.org/plugin/develop.html#system-level-api
  */
@@ -31,7 +29,6 @@ interface IRegisterPlugin {
 
 export interface IPluginMethodOpts {
   /**
-   *
    * @param args: Come from `applyPlugins(, { args: YOUR_ARGS })`
    */
   memo?: any;
@@ -40,7 +37,6 @@ export interface IPluginMethodOpts {
 
 export interface IPluginMethod {
   /**
-   *
    * @param opts: Includes args passed in from `applyPlugins` and memo
    * @param args: Arguments passed in from other plug-ins when they call this method
    */
@@ -49,7 +45,6 @@ export interface IPluginMethod {
 
 export interface IRegisterMethodOpts {
   /**
-   *
    * Choose one of `type` and `apply`.
    * View more at https://umijs.org/plugin/develop.html#registermethod
    */
@@ -80,7 +75,6 @@ interface IChangePluginOption {
 
 export interface ICommandOpts {
   /**
-   *
    * @param description: Description displayed when running `umi help`
    * @param details: Details displayed when running `umi help [YOUR_COMMAND]`
    * @param hide: Hide your command in `umi help`
@@ -101,7 +95,6 @@ interface IRegisterCommand {
 
 export interface IRegisterConfigOpts<T = any> {
   /**
-   *
    * @param name: Name of your configuration
    * @param validate: Verify that the value of configuration is valid
    * @param onChange: Callback when the value of configuration changes
@@ -133,7 +126,6 @@ interface IModifyCommand {
 }
 
 /**
- *
  * Tool class API
  * https://umijs.org/plugin/develop.html#tool-class-api
  */
@@ -154,7 +146,6 @@ interface ICompatDirname<T = any> {
 }
 
 /**
- *
  * Event class API
  * https://umijs.org/plugin/develop.html#event-class-api
  */
@@ -231,7 +222,6 @@ interface IOnPatchRoute {
 }
 
 /**
- *
  * Application class API
  * https://umijs.org/plugin/develop.html#application-class-api
  */
@@ -241,7 +231,6 @@ interface IChangeWebpackConfig {
 
 export interface IModifyFunc<T = any, U = any> {
   /**
-   *
    * https://umijs.org/plugin/develop.html#registermethod
    */
   (memo: T | undefined, args?: U): T | any;
@@ -253,7 +242,6 @@ export interface IModify<T = any, U = any> {
 
 export interface IAddFunc<T = any, U = any> {
   /**
-   *
    * https://umijs.org/plugin/develop.html#registermethod
    */
   (memo: T[] | undefined, args?: U): T | T[];
@@ -298,7 +286,6 @@ interface IModifyHTMLWithAST {
 
 export interface IAddImportOpts {
   /**
-   *
    * @param source: Path to module
    * @param specifier: Module name with import, can be ignored
    */
@@ -314,7 +301,6 @@ interface IModifyRouteComponentArgs {
 
 export interface IApi {
   /**
-   *
    * System level variable
    * https://umijs.org/plugin/develop.html#system-level-variable
    */
@@ -332,8 +318,8 @@ export interface IApi {
     absTmpDirPath: string;
   };
   routes: IRoute[];
+
   /**
-   *
    * System level API
    * https://umijs.org/plugin/develop.html#system-level-api
    */
@@ -348,8 +334,8 @@ export interface IApi {
   registerCommand: IRegisterCommand;
   _registerConfig: IRegisterConfig;
   _modifyCommand: IModifyCommand;
+
   /**
-   *
    * Tool class API
    * https://umijs.org/plugin/develop.html#tool-class-api
    */
@@ -368,8 +354,8 @@ export interface IApi {
   findJS: IFind;
   findCSS: IFind;
   compatDirname: ICompatDirname;
+
   /**
-   *
    * Event class API
    * https://umijs.org/plugin/develop.html#event-class-api
    */
@@ -383,8 +369,8 @@ export interface IApi {
   onHTMLRebuild: IOnHTMLRebuild;
   onGenerateFiles: IOnGenerateFiles;
   onPatchRoute: IOnPatchRoute;
+
   /**
-   *
    * Application class API
    * https://umijs.org/plugin/develop.html#application-class-api
    */
