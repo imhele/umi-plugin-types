@@ -15,7 +15,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "np": "^3.1.0"
+    "np": "4"
   },
   "dependencies": {
     "@types/cheerio": "^0.22.10",
