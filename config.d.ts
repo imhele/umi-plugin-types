@@ -1,5 +1,6 @@
 // https://umijs.org/config/
 import { ExternalsElement, Condition } from 'webpack';
+
 export type IPlugin<T = any> = string | [string, T];
 
 export interface IRoute {

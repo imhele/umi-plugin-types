@@ -16,11 +16,22 @@ $ yarn add umi-plugin-types
 
 ## Usage
 
-```js
+```ts
 import { IApi } from 'umi-plugin-types';
 
 export default function(api: IApi) {
   api.log.success('hello');
+}
+```
+
+```ts
+import { IApi, IModifyHTMLWithASTFunc } from 'umi-plugin-types';
+
+export default function(api: IApi) {
+  const appendHead: IModifyHTMLWithASTFunc = ($, { route, getChunkPath }) => {
+    $('head').append(`<script src="${getChunkPath('a.js')}"></script>`);
+  };
+  api.modifyHTMLWithAST(appendHead);
 }
 ```
 

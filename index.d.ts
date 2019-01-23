@@ -1,4 +1,4 @@
-import IConfig, {IRoute} from './config';
+import IConfig, { IPlugin, IRoute } from './config';
 import { Stats, Configuration } from 'webpack';
 
 /**
@@ -11,7 +11,7 @@ declare enum API_TYPE {
   EVENT
 }
 
-export { IConfig, IRoute }
+export { IConfig, IPlugin, IRoute };
 
 /**
  * System level API
