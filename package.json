@@ -10,8 +10,7 @@
   "main": "",
   "types": "index",
   "scripts": {
-    "changelog": "git changelog CHANGELOG.md && git add ./ && git commit -m 'update CHANGELOG.md'",
-    "prepublishOnly": "npm run changelog && np --no-cleanup --yolo --no-publish"
+    "prepublishOnly": "np --no-cleanup --yolo --no-publish"
   },
   "license": "MIT",
   "devDependencies": {
