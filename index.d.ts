@@ -1,4 +1,4 @@
-import IConfig, { IPlugin, IRoute } from './config';
+import IConfig, { IPlugin, IAFWebpackConfig, IRoute } from './config';
 import { Stats, Configuration } from 'webpack';
 
 /**
@@ -399,7 +399,7 @@ export interface IApi {
   modifyRouteComponent: IModify<string, IModifyRouteComponentArgs>;
   modifyRouterRootComponent: IModify<string>;
   modifyWebpackConfig: IModify<Configuration>;
-  modifyAFWebpackOpts: IModify<object>;
+  modifyAFWebpackOpts: IModify<IAFWebpackConfig>;
   chainWebpackConfig: IChangeWebpackConfig;
   addMiddleware: IAdd;
   addMiddlewareAhead: IAdd;
