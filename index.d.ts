@@ -80,12 +80,14 @@ export interface ICommandOpts {
    * @param hide: Hide your command in `umi help`
    * @param options: Options displayed when running `umi help [YOUR_COMMAND]`
    * @param usage: Usage displayed when running `umi help [YOUR_COMMAND]`
+   * @param webpack: Whether to initialize webpack config
    */
   description?: string;
   details?: string;
   hide?: boolean;
   options?: object;
   usage?: string;
+  webpack?: boolean;
 }
 
 interface IRegisterCommand {
@@ -299,6 +301,13 @@ interface IModifyRouteComponentArgs {
   component: string;
 }
 
+interface IPkg {
+  name: string;
+  dependencies: {
+    [prop: string]: string;
+  };
+}
+
 export interface IApi {
   /**
    * System level variable
@@ -306,6 +315,9 @@ export interface IApi {
    */
   API_TYPE: typeof API_TYPE;
   config: IConfig;
+  cwd: string;
+  pkg: IPkg;
+  webpackConfig: Configuration;
   paths: {
     cwd: string;
     outputPath: string;
